@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     int PERMISSION_CODE = 1;
     String city = "";
     GetWeatherDetails getWeatherDetails;
-    List<Hour> hours=new ArrayList<>();
+    List<Hour> hours = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +54,13 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_CODE);
         }
         binding.rvWeather.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        getCityName(location.getLatitude(), location.getLongitude());
-        getWeather(city);
+        try {
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            getCityName(location.getLatitude(), location.getLongitude());
+            getWeather(city);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         binding.ivSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     String getCityName(double latitude, double longitude) {
@@ -107,24 +110,23 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         binding.backgroundImage.setImageResource(R.drawable.milky_way);
                     }
-                    Date date=new Date();
-                    for (Hour hour:getWeatherDetails.getForecast().getForecastday().get(0).getHour()){
+                    Date date = new Date();
+                    for (Hour hour : getWeatherDetails.getForecast().getForecastday().get(0).getHour()) {
                         SimpleDateFormat in = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                         SimpleDateFormat out = new SimpleDateFormat("HH");
                         try {
                             Date date1 = in.parse(hour.getTime());
-                            String cur=in.format(date);
-                            Date date2= in.parse(cur);
-                            String date3=out.format(date1);
-                            String date4=out.format(date2);
-                            if (Integer.parseInt(date3)>= Integer.parseInt(date4) ){
+                            String cur = in.format(date);
+                            Date date2 = in.parse(cur);
+                            String date3 = out.format(date1);
+                            String date4 = out.format(date2);
+                            if (Integer.parseInt(date3) >= Integer.parseInt(date4)) {
                                 hours.add(hour);
                             }
                             /*if (date1.equals(date2) || date1.after(date2)){
                                 hours.add(hour);
                             }*/
-                        }
-                        catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
